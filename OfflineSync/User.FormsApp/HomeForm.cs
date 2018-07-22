@@ -226,7 +226,7 @@ namespace User.FormsApp
 
                 using (SQLiteConnection conn = new SQLiteConnection(GlobalConfig.DBPath))
                 {
-                    switch (cbTblType.SelectedItem)
+                    switch (cbTblType.SelectedItem.ToString())
                     {
                         case "tblTestACTS":
                             conn.Insert(new tblTestACTS()
@@ -303,7 +303,7 @@ namespace User.FormsApp
                 {
                     dynamic rec = null;
 
-                    switch (cbTblType.SelectedItem)
+                    switch (cbTblType.SelectedItem.ToString())
                     {
                         case "tblTestACTS":
                             rec = conn.Table<tblTestACTS>().ToList().Where(m => m.ID == Convert.ToInt16(txtClientID.Text)).FirstOrDefault();
@@ -366,7 +366,7 @@ namespace User.FormsApp
             {
                 ClearClientValidations();
 
-                switch (cbTblType.SelectedItem)
+                switch (cbTblType.SelectedItem.ToString())
                 {
                     case "tblTestACTS":
                         new SyncUtility<tblTestACTS>().StartSyncAsync();
@@ -482,7 +482,7 @@ namespace User.FormsApp
             {
                 using (SQLiteConnection conn = new SQLiteConnection(GlobalConfig.DBPath))
                 {
-                    switch (cbTblType.SelectedItem)
+                    switch (cbTblType.SelectedItem.ToString())
                     {
                         case "tblTestACTS":
                             dgvRecords.DataSource = conn.Table<tblTestACTS>().ToList();
@@ -539,7 +539,7 @@ namespace User.FormsApp
 
         #region Server
 
-        const string _connString = "Server=.;User ID=sa;Password=Welcome@1234;DataBase=SyncDB;";
+        const string _connString = "Server=ggku4mpc71;User ID=test;Password=Welcome2ggk;DataBase=SyncDB;";
 
         private void btnServerAdd_Click(object sender, EventArgs e)
         {
@@ -551,7 +551,7 @@ namespace User.FormsApp
                 {
                     string query = string.Empty;
 
-                    switch (cbServerTableType.SelectedItem)
+                    switch (cbServerTableType.SelectedItem.ToString())
                     {
                         case "tblTestACTS":
                             query = "INSERT INTO [dbo].[tblTestACTS]([Name]) VALUES ('"
@@ -610,7 +610,7 @@ namespace User.FormsApp
                 {
                     string query = string.Empty;
 
-                    switch (cbServerTableType.SelectedItem)
+                    switch (cbServerTableType.SelectedItem.ToString())
                     {
                         case "tblTestACTS":
                             query = "UPDATE [dbo].[tblTestACTS] SET [Name] = '" + txtServerName.Text + "' " +
@@ -761,7 +761,7 @@ namespace User.FormsApp
                     DataSet dataSet = new DataSet();
                     string command = "SELECT * FROM ";
 
-                    switch (cbServerTableType.SelectedItem)
+                    switch (cbServerTableType.SelectedItem.ToString())
                     {
                         case "tblTestACTS":
                             command += "tblTestACTS";

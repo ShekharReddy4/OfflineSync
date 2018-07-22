@@ -170,7 +170,6 @@ namespace OfflineSync.Server.DB
 
         public void InsertUpdate<T>(APIModel model) where T : class, ISQLSyncServerModel
         {
-
             List<T> list = JsonConvert.DeserializeObject<List<T>>(model.Data.ToString());
 
             string transactionID = list.FirstOrDefault().TransactionID;
@@ -254,6 +253,8 @@ namespace OfflineSync.Server.DB
         {
             using (SQLContext<tblSyncDevice> db = new SQLContext<tblSyncDevice>())
             {
+
+
                 string newID = Guid.NewGuid().ToString();
 
                 while (db.Set<tblSyncDevice>().Any(m => m.DeviceID == newID))
@@ -269,6 +270,100 @@ namespace OfflineSync.Server.DB
                 db.SaveChanges();
 
                 return newID;
+            }
+        }
+    }
+
+    public static class SQLServerDBUtility
+    {
+        public static void CreateGlobalTrigger()
+        {
+            using (SQLContext<tblSyncDevice> db = new SQLContext<tblSyncDevice>())
+            {
+                try
+                {
+                    db.Database.ExecuteSqlCommand(
+                        " CREATE TRIGGER Trigger_Sync" +
+                        " ON DATABASE" +
+                        " FOR CREATE_Table" +
+                        " AS" +
+
+                        " BEGIN TRY" +
+
+                        " DECLARE @Name VARCHAR(MAX);" +
+                        " SET @Name = (SELECT EVENTDATA().value('(/EVENT_INSTANCE/ObjectName)[1]', 'VARCHAR(MAX)'));" +
+
+                        " IF 4 = (SELECT COUNT(*) Names from SYS.COLUMNS WHERE OBJECT_ID = OBJECT_ID(@Name)" +
+
+                        " AND NAME IN('VersionID', 'TransactionID', 'SyncCreatedAt', 'SyncModifiedAt'))" +
+                        " BEGIN" +
+                          
+                        " EXEC(N'CREATE TRIGGER ' + @Name + '_SyncModifyTrigger ON ' + @Name +" +
+                        " ' AFTER UPDATE ' +" +
+                        " ' AS' +" +
+                        " ' BEGIN' +" +
+                          
+                        " ' DECLARE @VersionID VARCHAR(500);' +" +
+                          
+                        " ' SET @VersionID = (SELECT VersionID FROM DELETED)' +" +
+                          
+                        " ' IF @VersionID IS NOT NULL' +" +
+                        " ' BEGIN' +" +
+                          
+                        " ' SET @VersionID = (SELECT T.VersionID ' +" +
+                        " ' FROM '+ @Name +' AS T ' +" +
+                        " ' JOIN [INSERTED] AS I ' +" +
+                        " ' ON I.VersionID = T.VersionID)' +" +
+                          
+                        " ' DECLARE @SyncModifiedAt VARCHAR(50);' +" +
+                          
+                        " ' SET @SyncModifiedAt = (SELECT CONVERT(CHAR(19), CONVERT(DATETIME,' +" +
+                        " ' CASE' +" +
+                        " ' WHEN D.[SyncModifiedAt] IS NULL' +" +
+                        " ' THEN I.[SyncModifiedAt]' +" +
+                        " ' WHEN CAST(D.[SyncModifiedAt] AS DATETIME) > CAST(I.[SyncModifiedAt] AS DATETIME) ' +" +
+                        " ' THEN D.[SyncModifiedAt]' +" +
+                        " ' WHEN CAST(D.[SyncModifiedAt] AS DATETIME) < CAST(I.[SyncModifiedAt] AS DATETIME) ' +" +
+                        " ' THEN I.[SyncModifiedAt]' +" +
+                        " ' WHEN CAST(D.[SyncModifiedAt] AS DATETIME) = CAST(I.[SyncModifiedAt] AS DATETIME) ' +" +
+                        " ' THEN (SELECT GETUTCDATE())' +" +
+                        " ' END,' +" +
+                        " ' 101),120)' +" +
+                        " ' FROM [DELETED] AS D' +" +
+                        " ' JOIN [INSERTED] AS I' +" +
+                        " ' ON D.VersionID = I.VersionID)' +" +
+
+                        " ' UPDATE ' + @Name + " +
+                        " ' SET [SyncModifiedAt] = @SyncModifiedAt' +" +
+                        " ' WHERE VersionID = (SELECT VersionID FROM INSERTED WHERE VersionID = @VersionID );' +" +
+                          
+                        " ' END' +" +
+                        " ' END');" +
+                          
+                        " EXEC(N'CREATE TRIGGER ' + @Name + '_SyncCreateTrigger ON ' + @Name +" +
+                        " ' AFTER INSERT ' +" +
+                        " ' AS ' +" +
+                        " ' BEGIN' +" +
+                          
+                        " ' UPDATE' + ' ' + @Name +" +
+                        " ' SET VersionID =  (CONVERT(VARCHAR(64), NEWID()) + CONVERT(VARCHAR(64), NEWID()))," +
+                          
+                        " SyncCreatedAt = CONVERT(CHAR(19), CONVERT(DATETIME, GETUTCDATE(), 101), 120)," +
+                        " SyncModifiedAt = CONVERT(CHAR(19), CONVERT(DATETIME, GETUTCDATE(), 101), 120)" +
+                          
+                        " WHERE VersionID IS NULL; ' +" +
+                          
+                        " ' END');" +
+                          
+                        " END" +
+                          
+                        " END TRY" +
+                        " BEGIN CATCH" +
+                        " END CATCH");
+                }
+                catch (Exception ex)
+                {
+                }
             }
         }
     }

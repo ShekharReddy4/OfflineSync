@@ -13,6 +13,8 @@ namespace User.APIApp
             // Registering Config Route
             OfflineSync.Server.Config.Register(config);
 
+            OfflineSync.Server.DB.SQLServerDBUtility.CreateGlobalTrigger();
+
             config.Routes.MapHttpRoute(
                 name: "DefaultApi",
                 routeTemplate: "api/{controller}/{id}",

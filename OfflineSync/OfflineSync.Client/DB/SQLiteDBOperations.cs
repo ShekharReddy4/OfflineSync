@@ -22,7 +22,6 @@ namespace OfflineSync.Client.DB
 
             using (SQLiteConnection conn = new SQLiteConnection(GlobalConfig.DBPath))
             {
-
                 conn.CreateTable<SQLiteConfigurationsModel>();
                 conn.CreateTable<SQLiteSyncSettingsModel>();
             }
