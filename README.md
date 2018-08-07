@@ -122,32 +122,43 @@ public enum ClientDBType
 </details>
 
 <details open>
-<summary>Step 2</summary>
+<summary>Step 3</summary>
 <br>
-Step 2 heading
+Add Device ID
 <br><br>
 <pre>
-code snippet
+new DeviceIDUtility().InitializeDeviceID();
 </pre>
 </details>
 
 <details open>
-<summary>Step 3</summary>
+<summary>Step 2</summary>
 <br>
-Step 3 heading
+Add Settings for each of the tables you want to sync as follows.
 <br><br>
 <pre>
-code snippet
+SyncSettingsUtility syncSettings = new SyncSettingsUtility();
+syncSettings.Add(
+    new SQLiteSyncSettingsModel
+    {
+        AutoSync = true,
+        ClientTableName = typeof(tblTestClient).Name,
+        Priority = OveridePriority.LastUpdated,
+        SyncType = SyncType.SyncClientToServer,
+        ServerAssemblyName = "User.APIApp",
+        ServerTableName = "tblTestModelServer"
+    }
+);
 </pre>
 </details>
 
 <details open>
 <summary>Step 4</summary>
 <br>
-Step 4 heading
+Call SyncAsync 
 <br><br>
 <pre>
-code snippet
+new SyncUtility<tblTestACTS>().StartSyncAsync();
 </pre>
 </details>
 
