@@ -102,11 +102,23 @@ Following steps illustrate the configuration and usage of offline sync in a proj
 <details open>
 <summary>Step 1</summary>
 <br>
-Step 1 heading
-<br><br>
+Adding Global Configurations on the client side:
+
+* In the client application  add the following lines which adds global configuration (API URL, Client DB Path, Auth Token, Client DB Type)
+
 <pre>
-code snippet
+SyncGlobalConfig.DBPath = @"SyncDB.db";
+SyncGlobalConfig.Token = "";
+SyncGlobalConfig.APIUrl = @"http://localhost:64115/API/";
+SyncGlobalConfig.APIUrl = ClientDBType.SQLite;
 </pre>
+For reference Enum `ClientDBType.cs` is as follows:
+<pre>
+public enum ClientDBType
+{
+  SQLite = 0
+}
+</pre> 
 </details>
 
 <details open>
