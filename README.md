@@ -122,7 +122,7 @@ public enum ClientDBType
 </details>
 
 <details open>
-<summary>Step 3</summary>
+<summary>Step 2</summary>
 <br>
 Add Device ID
 <br><br>
@@ -132,7 +132,7 @@ new DeviceIDUtility().InitializeDeviceID();
 </details>
 
 <details open>
-<summary>Step 2</summary>
+<summary>Step 3</summary>
 <br>
 Add Settings for each of the tables you want to sync as follows.
 <br><br>
@@ -155,10 +155,10 @@ syncSettings.Add(
 <details open>
 <summary>Step 4</summary>
 <br>
-Call SyncAsync 
+Call SyncAsync
 <br><br>
 <pre>
-new SyncUtility<tblTestACTS>().StartSyncAsync();
+new SyncUtility&lt;tblTestACTS>().StartSyncAsync();
 </pre>
 </details>
 
