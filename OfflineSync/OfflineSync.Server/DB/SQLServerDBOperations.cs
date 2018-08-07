@@ -283,6 +283,12 @@ namespace OfflineSync.Server.DB
                 try
                 {
                     db.Database.ExecuteSqlCommand(
+                        " IF EXISTS(SELECT 1 FROM sys.triggers WHERE Name = 'Trigger_Sync') " +
+                        " BEGIN " +
+                        " DROP TRIGGER Trigger_Sync ON DATABASE " +
+                        " END ");
+
+                    db.Database.ExecuteSqlCommand(
                         " CREATE TRIGGER Trigger_Sync" +
                         " ON DATABASE" +
                         " FOR CREATE_Table" +
@@ -295,28 +301,30 @@ namespace OfflineSync.Server.DB
 
                         " IF 4 = (SELECT COUNT(*) Names from SYS.COLUMNS WHERE OBJECT_ID = OBJECT_ID(@Name)" +
 
+                        "" +
+
                         " AND NAME IN('VersionID', 'TransactionID', 'SyncCreatedAt', 'SyncModifiedAt'))" +
                         " BEGIN" +
-                          
+
                         " EXEC(N'CREATE TRIGGER ' + @Name + '_SyncModifyTrigger ON ' + @Name +" +
                         " ' AFTER UPDATE ' +" +
                         " ' AS' +" +
                         " ' BEGIN' +" +
-                          
+
                         " ' DECLARE @VersionID VARCHAR(500);' +" +
-                          
+
                         " ' SET @VersionID = (SELECT VersionID FROM DELETED)' +" +
-                          
+
                         " ' IF @VersionID IS NOT NULL' +" +
                         " ' BEGIN' +" +
-                          
+
                         " ' SET @VersionID = (SELECT T.VersionID ' +" +
                         " ' FROM '+ @Name +' AS T ' +" +
                         " ' JOIN [INSERTED] AS I ' +" +
                         " ' ON I.VersionID = T.VersionID)' +" +
-                          
+
                         " ' DECLARE @SyncModifiedAt VARCHAR(50);' +" +
-                          
+
                         " ' SET @SyncModifiedAt = (SELECT CONVERT(CHAR(19), CONVERT(DATETIME,' +" +
                         " ' CASE' +" +
                         " ' WHEN D.[SyncModifiedAt] IS NULL' +" +
@@ -336,30 +344,137 @@ namespace OfflineSync.Server.DB
                         " ' UPDATE ' + @Name + " +
                         " ' SET [SyncModifiedAt] = @SyncModifiedAt' +" +
                         " ' WHERE VersionID = (SELECT VersionID FROM INSERTED WHERE VersionID = @VersionID );' +" +
-                          
+
                         " ' END' +" +
                         " ' END');" +
-                          
+
                         " EXEC(N'CREATE TRIGGER ' + @Name + '_SyncCreateTrigger ON ' + @Name +" +
                         " ' AFTER INSERT ' +" +
                         " ' AS ' +" +
                         " ' BEGIN' +" +
-                          
+
                         " ' UPDATE' + ' ' + @Name +" +
                         " ' SET VersionID =  (CONVERT(VARCHAR(64), NEWID()) + CONVERT(VARCHAR(64), NEWID()))," +
-                          
+
                         " SyncCreatedAt = CONVERT(CHAR(19), CONVERT(DATETIME, GETUTCDATE(), 101), 120)," +
                         " SyncModifiedAt = CONVERT(CHAR(19), CONVERT(DATETIME, GETUTCDATE(), 101), 120)" +
-                          
+
                         " WHERE VersionID IS NULL; ' +" +
-                          
+
                         " ' END');" +
-                          
+
                         " END" +
-                          
+
                         " END TRY" +
                         " BEGIN CATCH" +
                         " END CATCH");
+
+                    db.Database.ExecuteSqlCommand(
+                        " DECLARE @Cursor CURSOR; " +
+                        " DECLARE @TableName Varchar(20); " +
+                        "  " +
+                        " SET @Cursor = CURSOR FOR " +
+                        " SELECT NAME FROM SYS.TABLES " +
+                        "  " +
+                        " OPEN @Cursor " +
+                        " FETCH NEXT FROM @Cursor " +
+                        " INTO @TableName " +
+                        "  " +
+                        " WHILE @@FETCH_STATUS = 0 " +
+                        " BEGIN " +
+
+                        " IF(SELECT COUNT(*) Names FROM SYS.COLUMNS WHERE OBJECT_ID = OBJECT_ID(@TableName) " +
+                        "  " +
+                        " AND NAME IN('VersionID', 'TransactionID', 'SyncCreatedAt', 'SyncModifiedAt')) = 4 " +
+                        "  " +
+                        " BEGIN " +
+                        " IF EXISTS(SELECT Tr.NAME FROM SYS.TRIGGERS Tr JOIN SYS.TABLES T ON " +
+                        "  " +
+                        " Tr.parent_id = T.object_id WHERE T.object_id = object_id(@TableName) " +
+                        "  " +
+                        " AND Tr.NAME like @TableName + '_SyncCreateTrigger') " +
+                        "  " +
+                        " BEGIN " +
+                        "  " +
+                        " EXEC(N'DROP TRIGGER ' + @TableName + '_SyncCreateTrigger'); " +
+                        " END " +
+                        "  " +
+                        " IF EXISTS(SELECT Tr.NAME FROM SYS.TRIGGERS Tr JOIN SYS.TABLES T ON " +
+                        "  " +
+                        " Tr.parent_id = T.object_id WHERE T.object_id = object_id(@TableName) " +
+                        "  " +
+                        " AND Tr.NAME like @TableName + '_SyncModifyTrigger') " +
+                        "  " +
+                        " BEGIN " +
+                        "  " +
+                        " EXEC(N'DROP TRIGGER ' + @TableName + '_SyncModifyTrigger'); " +
+                        " END " +
+                        " " +
+
+                        " EXEC(N'CREATE TRIGGER ' + @TableName + '_SyncModifyTrigger ON ' + @TableName +" +
+                        " ' AFTER UPDATE ' +" +
+                        " ' AS' +" +
+                        " ' BEGIN' +" +
+
+                        " ' DECLARE @VersionID VARCHAR(500);' +" +
+
+                        " ' SET @VersionID = (SELECT VersionID FROM DELETED)' +" +
+
+                        " ' IF @VersionID IS NOT NULL' +" +
+                        " ' BEGIN' +" +
+
+                        " ' SET @VersionID = (SELECT T.VersionID ' +" +
+                        " ' FROM '+ @TableName +' AS T ' +" +
+                        " ' JOIN [INSERTED] AS I ' +" +
+                        " ' ON I.VersionID = T.VersionID)' +" +
+
+                        " ' DECLARE @SyncModifiedAt VARCHAR(50);' +" +
+
+                        " ' SET @SyncModifiedAt = (SELECT CONVERT(CHAR(19), CONVERT(DATETIME,' +" +
+                        " ' CASE' +" +
+                        " ' WHEN D.[SyncModifiedAt] IS NULL' +" +
+                        " ' THEN I.[SyncModifiedAt]' +" +
+                        " ' WHEN CAST(D.[SyncModifiedAt] AS DATETIME) > CAST(I.[SyncModifiedAt] AS DATETIME) ' +" +
+                        " ' THEN D.[SyncModifiedAt]' +" +
+                        " ' WHEN CAST(D.[SyncModifiedAt] AS DATETIME) < CAST(I.[SyncModifiedAt] AS DATETIME) ' +" +
+                        " ' THEN I.[SyncModifiedAt]' +" +
+                        " ' WHEN CAST(D.[SyncModifiedAt] AS DATETIME) = CAST(I.[SyncModifiedAt] AS DATETIME) ' +" +
+                        " ' THEN (SELECT GETUTCDATE())' +" +
+                        " ' END,' +" +
+                        " ' 101),120)' +" +
+                        " ' FROM [DELETED] AS D' +" +
+                        " ' JOIN [INSERTED] AS I' +" +
+                        " ' ON D.VersionID = I.VersionID)' +" +
+
+                        " ' UPDATE ' + @TableName + " +
+                        " ' SET [SyncModifiedAt] = @SyncModifiedAt' +" +
+                        " ' WHERE VersionID = (SELECT VersionID FROM INSERTED WHERE VersionID = @VersionID );' +" +
+
+                        " ' END' +" +
+                        " ' END');" +
+
+                        " EXEC(N'CREATE TRIGGER ' + @TableName + '_SyncCreateTrigger ON ' + @TableName +" +
+                        " ' AFTER INSERT ' +" +
+                        " ' AS ' +" +
+                        " ' BEGIN' +" +
+
+                        " ' UPDATE' + ' ' + @TableName +" +
+                        " ' SET VersionID =  (CONVERT(VARCHAR(64), NEWID()) + CONVERT(VARCHAR(64), NEWID()))," +
+
+                        " SyncCreatedAt = CONVERT(CHAR(19), CONVERT(DATETIME, GETUTCDATE(), 101), 120)," +
+                        " SyncModifiedAt = CONVERT(CHAR(19), CONVERT(DATETIME, GETUTCDATE(), 101), 120)" +
+
+                        " WHERE VersionID IS NULL; ' +" +
+
+                        " ' END');" +
+
+                        " END " +
+
+                        " FETCH NEXT FROM @Cursor INTO @TableName " +
+                        " END " +
+                        " CLOSE @Cursor " +
+                        " DEALLOCATE @Cursor "
+                        );
                 }
                 catch (Exception ex)
                 {

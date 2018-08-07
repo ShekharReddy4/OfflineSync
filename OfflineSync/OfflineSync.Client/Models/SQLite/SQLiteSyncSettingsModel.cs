@@ -13,7 +13,7 @@ namespace OfflineSync.Client.Models.SQLite
         [Unique]
         public string ClientTableName { get; set; }
         public string ControllerRoute { get; set; }
-        public string Data { get; set; }
+        public string ControllerData { get; set; }
         public string ServerAssemblyName { get; set; }
         public string ServerTableName { get; set; }
         public bool AutoSync { get; set; }

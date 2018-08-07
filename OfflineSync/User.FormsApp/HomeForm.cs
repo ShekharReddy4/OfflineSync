@@ -32,9 +32,9 @@ namespace User.FormsApp
             {
                 ClearClientValidations();
 
-                GlobalConfig.DBPath = @"SyncDB.db";
-                GlobalConfig.Token = "";
-                GlobalConfig.APIUrl = @"http://localhost:64115/API/";
+                SyncGlobalConfig.DBPath = @"SyncDB.db";
+                SyncGlobalConfig.Token = "";
+                SyncGlobalConfig.APIUrl = @"http://localhost:64115/API/";
 
                 lblClientVal.Text = "Global config updated successfully";
             }
@@ -68,13 +68,11 @@ namespace User.FormsApp
             {
                 ClearClientValidations();
 
-                SQLite.SQLiteConnection db = new SQLite.SQLiteConnection(GlobalConfig.DBPath);
+                SQLite.SQLiteConnection db = new SQLite.SQLiteConnection(SyncGlobalConfig.DBPath);
                 db.CreateTable<tblTestACTS>();
                 db.CreateTable<tblTestACTSH>();
                 db.CreateTable<tblTestASTC>();
                 db.CreateTable<tblTestATWS>();
-                db.CreateTable<tblTestCTS>();
-                db.CreateTable<tblTestCTSH>();
                 db.CreateTable<tblTestSTC>();
                 db.CreateTable<tblTestTWS>();
 
@@ -149,48 +147,26 @@ namespace User.FormsApp
                 syncSettings.Add(
                     new SQLiteSyncSettingsModel
                     {
-                        AutoSync = true,
-                        ClientTableName = typeof(tblTestCTS).Name,
-                        Priority = OveridePriority.LastUpdated,
-                        SyncType = SyncType.SyncClientToServer,
-                        ServerAssemblyName = "User.APIApp",
-                        ServerTableName = "tblTestCTS"
-                    }
-                );
-
-                syncSettings.Add(
-                    new SQLiteSyncSettingsModel
-                    {
-                        AutoSync = true,
-                        ClientTableName = typeof(tblTestCTSH).Name,
-                        Priority = OveridePriority.LastUpdated,
-                        SyncType = SyncType.SyncClientToServerAndHardDelete,
-                        ServerAssemblyName = "User.APIApp",
-                        ServerTableName = "tblTestCTSH"
-                    }
-                );
-
-                syncSettings.Add(
-                    new SQLiteSyncSettingsModel
-                    {
-                        AutoSync = true,
+                        AutoSync = false,
                         ClientTableName = typeof(tblTestSTC).Name,
                         Priority = OveridePriority.LastUpdated,
                         SyncType = SyncType.SyncServerToClient,
-                        ServerAssemblyName = "User.APIApp",
-                        ServerTableName = "tblTestSTC"
+                        ControllerRoute = "Home/GetData",
+                        ControllerData = "tblTestSTC"
                     }
                 );
 
                 syncSettings.Add(
                    new SQLiteSyncSettingsModel
                    {
-                       AutoSync = true,
+                       AutoSync = false,
                        ClientTableName = typeof(tblTestTWS).Name,
                        Priority = OveridePriority.LastUpdated,
+                       ControllerRoute = "Home/GetData",
                        SyncType = SyncType.SyncTwoWay,
                        ServerAssemblyName = "User.APIApp",
-                       ServerTableName = "tblTestTWS"
+                       ServerTableName = "tblTestATWS",
+                       ControllerData = "tblTestSTC"
                    }
                );
 
@@ -224,7 +200,7 @@ namespace User.FormsApp
             {
                 ClearClientValidations();
 
-                using (SQLiteConnection conn = new SQLiteConnection(GlobalConfig.DBPath))
+                using (SQLiteConnection conn = new SQLiteConnection(SyncGlobalConfig.DBPath))
                 {
                     switch (cbTblType.SelectedItem.ToString())
                     {
@@ -248,18 +224,6 @@ namespace User.FormsApp
                             break;
                         case "tblTestATWS":
                             conn.Insert(new tblTestATWS()
-                            {
-                                Name = txtClientName.Text
-                            });
-                            break;
-                        case "tblTestCTS":
-                            conn.Insert(new tblTestCTS()
-                            {
-                                Name = txtClientName.Text
-                            });
-                            break;
-                        case "tblTestCTSH":
-                            conn.Insert(new tblTestCTSH()
                             {
                                 Name = txtClientName.Text
                             });
@@ -299,7 +263,7 @@ namespace User.FormsApp
             {
                 ClearClientValidations();
 
-                using (SQLiteConnection conn = new SQLiteConnection(GlobalConfig.DBPath))
+                using (SQLiteConnection conn = new SQLiteConnection(SyncGlobalConfig.DBPath))
                 {
                     dynamic rec = null;
 
@@ -319,14 +283,6 @@ namespace User.FormsApp
                             break;
                         case "tblTestATWS":
                             rec = conn.Table<tblTestATWS>().ToList().Where(m => m.ID == Convert.ToInt16(txtClientID.Text)).FirstOrDefault();
-                            rec.Name = txtClientName.Text;
-                            break;
-                        case "tblTestCTS":
-                            rec = conn.Table<tblTestCTS>().ToList().Where(m => m.ID == Convert.ToInt16(txtClientID.Text)).FirstOrDefault();
-                            rec.Name = txtClientName.Text;
-                            break;
-                        case "tblTestCTSH":
-                            rec = conn.Table<tblTestCTSH>().ToList().Where(m => m.ID == Convert.ToInt16(txtClientID.Text)).FirstOrDefault();
                             rec.Name = txtClientName.Text;
                             break;
                         case "tblTestSTC":
@@ -380,12 +336,6 @@ namespace User.FormsApp
                     case "tblTestATWS":
                         new SyncUtility<tblTestATWS>().StartSyncAsync();
                         break;
-                    case "tblTestCTS":
-                        new SyncUtility<tblTestCTS>().StartSyncAsync();
-                        break;
-                    case "tblTestCTSH":
-                        new SyncUtility<tblTestCTSH>().StartSyncAsync();
-                        break;
                     case "tblTestSTC":
                         new SyncUtility<tblTestSTC>().StartSyncAsync();
                         break;
@@ -436,7 +386,7 @@ namespace User.FormsApp
         {
             try
             {
-                using (SQLiteConnection conn = new SQLiteConnection(GlobalConfig.DBPath))
+                using (SQLiteConnection conn = new SQLiteConnection(SyncGlobalConfig.DBPath))
                 {
                     var rec = conn.Table<SQLiteSyncSettingsModel>().ToList()
                         .Where(m => m.ClientTableName == cbTblType.SelectedItem.ToString()).FirstOrDefault();
@@ -457,7 +407,7 @@ namespace User.FormsApp
         {
             try
             {
-                using (SQLiteConnection conn = new SQLiteConnection(GlobalConfig.DBPath))
+                using (SQLiteConnection conn = new SQLiteConnection(SyncGlobalConfig.DBPath))
                 {
                     var rec = conn.Table<SQLiteConfigurationsModel>()
                                           .ToList()
@@ -480,7 +430,7 @@ namespace User.FormsApp
         {
             try
             {
-                using (SQLiteConnection conn = new SQLiteConnection(GlobalConfig.DBPath))
+                using (SQLiteConnection conn = new SQLiteConnection(SyncGlobalConfig.DBPath))
                 {
                     switch (cbTblType.SelectedItem.ToString())
                     {
@@ -495,12 +445,6 @@ namespace User.FormsApp
                             break;
                         case "tblTestATWS":
                             dgvRecords.DataSource = conn.Table<tblTestATWS>().ToList();
-                            break;
-                        case "tblTestCTS":
-                            dgvRecords.DataSource = conn.Table<tblTestCTS>().ToList();
-                            break;
-                        case "tblTestCTSH":
-                            dgvRecords.DataSource = conn.Table<tblTestCTSH>().ToList();
                             break;
                         case "tblTestSTC":
                             dgvRecords.DataSource = conn.Table<tblTestSTC>().ToList();
@@ -569,17 +513,13 @@ namespace User.FormsApp
                             query = "INSERT INTO [dbo].[tblTestATWS]([Name]) VALUES ('"
                                 + txtServerName.Text + "')";
                             break;
-                        case "tblTestCTS":
-                            query = "";
-                            break;
-                        case "tblTestCTSH":
-                            query = "";
-                            break;
                         case "tblTestSTC":
-                            query = "";
+                            query = "INSERT INTO [dbo].[tblTestSTC]([Name]) VALUES ('"
+                               + txtServerName.Text + "')";
                             break;
                         case "tblTestTWS":
-                            query = "";
+                            query = "INSERT INTO [dbo].[tblTestTWS]([Name]) VALUES ('"
+                                + txtServerName.Text + "')";
                             break;
                     }
 
@@ -628,17 +568,13 @@ namespace User.FormsApp
                             query = "UPDATE [dbo].[tblTestATWS] SET [Name] = '" + txtServerName.Text + "' " +
                                       "WHERE ID = " + txtServerID.Text + ";";
                             break;
-                        case "tblTestCTS":
-                            query = "";
-                            break;
-                        case "tblTestCTSH":
-                            query = "";
-                            break;
                         case "tblTestSTC":
-                            query = "";
+                            query = "UPDATE [dbo].[tblTestSTC] SET [Name] = '" + txtServerName.Text + "' " +
+                                     "WHERE ID = " + txtServerID.Text + ";";
                             break;
                         case "tblTestTWS":
-                            query = "";
+                            query = "UPDATE [dbo].[tblTestTWS] SET [Name] = '" + txtServerName.Text + "' " +
+                                     "WHERE ID = " + txtServerID.Text + ";";
                             break;
                     }
 
@@ -708,16 +644,6 @@ namespace User.FormsApp
                                       "[VersionID][nvarchar](max) NULL,[TransactionID] [nvarchar] (max) NULL," +
                                       "[SyncCreatedAt] [datetime] NULL,[SyncModifiedAt] [datetime] NULL) " +
 
-                                      "IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='tblTestCTS' AND xtype='U')" +
-                                      "CREATE TABLE [dbo].[tblTestCTS]([ID] [int] PRIMARY KEY IDENTITY(1,1) NOT NULL,[Name] [nvarchar](max) NULL," +
-                                      "[VersionID][nvarchar](max) NULL,[TransactionID] [nvarchar] (max) NULL," +
-                                      "[SyncCreatedAt] [datetime] NULL,[SyncModifiedAt] [datetime] NULL) " +
-
-                                      "IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='tblTestCTSH' AND xtype='U')" +
-                                      "CREATE TABLE [dbo].[tblTestCTSH]([ID] [int] PRIMARY KEY IDENTITY(1,1) NOT NULL,[Name] [nvarchar](max) NULL," +
-                                      "[VersionID][nvarchar](max) NULL,[TransactionID] [nvarchar] (max) NULL," +
-                                      "[SyncCreatedAt] [datetime] NULL,[SyncModifiedAt] [datetime] NULL) " +
-
                                       "IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='tblTestSTC' AND xtype='U')" +
                                       "CREATE TABLE [dbo].[tblTestSTC]([ID] [int] PRIMARY KEY IDENTITY(1,1) NOT NULL,[Name] [nvarchar](max) NULL," +
                                       "[VersionID][nvarchar](max) NULL,[TransactionID] [nvarchar] (max) NULL," +
@@ -774,12 +700,6 @@ namespace User.FormsApp
                             break;
                         case "tblTestATWS":
                             command += "tblTestATWS";
-                            break;
-                        case "tblTestCTS":
-                            command += "tblTestCTS";
-                            break;
-                        case "tblTestCTSH":
-                            command += "tblTestCTSH";
                             break;
                         case "tblTestSTC":
                             command += "tblTestSTC";

@@ -11,7 +11,7 @@ namespace OfflineSync.Client.Utilities
 
         public SyncSettingsUtility()
         {
-            switch (GlobalConfig.DBType)
+            switch (SyncGlobalConfig.DBType)
             {
                 case ClientDBType.SQLite:
                     _dBOperations = new SQLiteDBOperations();

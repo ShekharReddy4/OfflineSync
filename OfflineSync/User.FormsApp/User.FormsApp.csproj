@@ -74,8 +74,6 @@
     <Compile Include="tblTestACTSH.cs" />
     <Compile Include="tblTestASTC.cs" />
     <Compile Include="tblTestATWS.cs" />
-    <Compile Include="tblTestCTS.cs" />
-    <Compile Include="tblTestCTSH.cs" />
     <Compile Include="tblTestSTC.cs" />
     <Compile Include="tblTestTWS.cs" />
     <EmbeddedResource Include="HomeForm.resx">

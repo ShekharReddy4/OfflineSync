@@ -8,7 +8,7 @@ namespace OfflineSync.Client.Models.BaseModels
         int SyncSettingsID { get; set; }
         string ClientTableName { get; set; }
         string ControllerRoute { get; set; }
-        string Data { get; set; }
+        string ControllerData { get; set; }
         string ServerAssemblyName { get; set; }
         string ServerTableName { get; set; }
         bool AutoSync { get; set; }

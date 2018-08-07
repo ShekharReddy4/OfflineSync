@@ -66,7 +66,7 @@
     <Compile Include="Enums\ClientDBType.cs" />
     <Compile Include="Enums\OveridePriority.cs" />
     <Compile Include="Models\BaseModels\IConfigurationsBaseModel.cs" />
-    <Compile Include="Models\GlobalConfig.cs" />
+    <Compile Include="Models\SyncGlobalConfig.cs" />
     <Compile Include="Models\BaseModels\ISyncClientBaseModel.cs" />
     <Compile Include="Models\SQLite\SQLiteConfigurationsModel.cs" />
     <Compile Include="Models\SQLite\ISQLiteSyncClientModel.cs" />

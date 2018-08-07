@@ -2,7 +2,7 @@
 
 namespace OfflineSync.Client.Models
 {
-    public static class GlobalConfig
+    public static class SyncGlobalConfig
     {
         public static string APIUrl { get; set; }
         public static string DBPath { get; set; }

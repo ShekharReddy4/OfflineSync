@@ -12,7 +12,7 @@ namespace OfflineSync.Client.Utilities
 
         public DeviceIDUtility()
         {
-            switch (GlobalConfig.DBType)
+            switch (SyncGlobalConfig.DBType)
             {
                 case ClientDBType.SQLite:
                     _dBOperations = new SQLiteDBOperations();
@@ -27,7 +27,7 @@ namespace OfflineSync.Client.Utilities
 
         internal async Task<string> GetDeviceID()
         {
-            SyncAPIUtility syncAPI = new SyncAPIUtility(GlobalConfig.APIUrl, GlobalConfig.Token);
+            SyncAPIUtility syncAPI = new SyncAPIUtility(SyncGlobalConfig.APIUrl, SyncGlobalConfig.Token);
 
             // Checking if deviceID exists
             string deviceID = _dBOperations.GetConfigurationsByKey("DeviceID");

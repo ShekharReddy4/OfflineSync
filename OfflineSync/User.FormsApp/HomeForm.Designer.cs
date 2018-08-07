@@ -293,8 +293,6 @@
             "tblTestACTSH",
             "tblTestASTC",
             "tblTestATWS",
-            "tblTestCTS",
-            "tblTestCTSH",
             "tblTestSTC",
             "tblTestTWS"});
             this.cbTblType.Location = new System.Drawing.Point(172, 78);
@@ -330,8 +328,6 @@
             "tblTestACTSH",
             "tblTestASTC",
             "tblTestATWS",
-            "tblTestCTS",
-            "tblTestCTSH",
             "tblTestSTC",
             "tblTestTWS"});
             this.cbServerTableType.Location = new System.Drawing.Point(1188, 78);

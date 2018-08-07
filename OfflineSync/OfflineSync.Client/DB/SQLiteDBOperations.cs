@@ -18,9 +18,9 @@ namespace OfflineSync.Client.DB
 
         public SQLiteDBOperations()
         {
-            _DBPath = GlobalConfig.DBPath;
+            _DBPath = SyncGlobalConfig.DBPath;
 
-            using (SQLiteConnection conn = new SQLiteConnection(GlobalConfig.DBPath))
+            using (SQLiteConnection conn = new SQLiteConnection(SyncGlobalConfig.DBPath))
             {
                 conn.CreateTable<SQLiteConfigurationsModel>();
                 conn.CreateTable<SQLiteSyncSettingsModel>();
@@ -279,7 +279,7 @@ namespace OfflineSync.Client.DB
 
         public void UpdateSyncSettingsModel(ISyncSettingsBaseModel model)
         {
-            using (SQLiteConnection conn = new SQLiteConnection(GlobalConfig.DBPath))
+            using (SQLiteConnection conn = new SQLiteConnection(SyncGlobalConfig.DBPath))
             {
                 var rec = conn.Table<SQLiteSyncSettingsModel>()
                               .Where(m => m.SyncSettingsID == model.SyncSettingsID).FirstOrDefault();
@@ -302,7 +302,7 @@ namespace OfflineSync.Client.DB
 
         public void AddSyncSettingsModel(ISyncSettingsBaseModel model)
         {
-            using (SQLiteConnection conn = new SQLiteConnection(GlobalConfig.DBPath))
+            using (SQLiteConnection conn = new SQLiteConnection(SyncGlobalConfig.DBPath))
             {
                 if (!conn.Table<SQLiteSyncSettingsModel>()
                     .Any(m => m.ClientTableName == model.ClientTableName))
