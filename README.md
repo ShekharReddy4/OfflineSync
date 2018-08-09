@@ -13,7 +13,7 @@
 
 ## **Introduction**
 
-Offline Sync is a Nuget Package which can be used to put client and server side Databases in sync with no data loss and tuned to configure all possible scenarios.
+Offline Sync is a Nuget Package which can be used to keep client and server side Databases in sync with no data loss and tuned to configure all possible scenarios.
 
 <p align="center"><b>Diagrammatical representation of a typical project using</b> <u><a href="https://github.com/KishoreIthadi/OfflineSync">Offline Sync</a></u></p>
 
@@ -81,7 +81,7 @@ These are a few terms that you would come across while you use the _offline sync
 
 #### **AutoSync**
 
-#### ***Priority***
+#### **Priority**
 
 #### **Version ID**
 
@@ -98,6 +98,12 @@ These are a few terms that you would come across while you use the _offline sync
 ## Configure a sample project to use OfflineSync
 
 Following steps illustrate the configuration and usage of offline sync in a project.
+
+### Client Side
+
+In the client project install this nuget package, please follow below steps.
+
+> **Note: Examples  below isllustrate using offlinesync to sync one table on client side with that of a respective one on the server side.**
 
 <details open>
 <summary>Step 1</summary>
@@ -161,6 +167,12 @@ Call SyncAsync
 new SyncUtility&lt;tblTestACTS>().StartSyncAsync();
 </pre>
 </details>
+
+### Server Side Configurations
+
+Please install the nuget package on the server application and follow below steps to enable offlinesync successfully
+
+* add connnection string in the web.config check the below example.
 
 ## **Contribute**
 
