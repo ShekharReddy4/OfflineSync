@@ -4,6 +4,7 @@
 <hr>
 
 
+[![NuGet](https://img.shields.io/nuget/v/Nuget.Core.svg)](https://www.nuget.org/packages/OfflineSyncTest.Server/)
 
 ## **Table of Contents**
 
