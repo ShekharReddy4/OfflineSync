@@ -11,7 +11,7 @@
     - [Client to server](#client-to-server)
     - [Client to server and Hard Delete](#client-to-server-and-hard-delete)
     - [Server to Client](#server-to-client)
-    - [TwoWay Sync](#two-way-sync)
+    - [TwoWay Sync](#twoway-sync)
 * [Terminology](#terminology)
   - [AutoSync](#autosync)
   * [Priority](#priority)
@@ -34,9 +34,12 @@ Offline Sync is a Nuget Package which can be used to keep client and server side
 </p>
 <hr>
 
+* **Note:**
+  >* **Currently only <u>SQLite</u> DB is supported on the client side and <u>SQLServer</u> DB on the server side. Future implementation would include other databases too.**
+
 ## **How to Use OfflineSync?**
 
-There are two dll's you need to add to your project. One in the client side and the other in the server side application and whichever table you are trying to sync you need to do the following in the client side.
+There are two dll's you need to add to your project. One in the client side and the other in the server side application and whichever table you are trying to sync you need to do the following in the client side application.
 
 <p align="center"><b>Diagrammatical heirarchy representation of tables in a typical project using</b> <u><a href="https://github.com/KishoreIthadi/OfflineSync">Offline Sync</a></u></p>
 
@@ -195,6 +198,10 @@ Please install the nuget package on the server application and follow below step
 
 Contributions are always welcome!
 Please read the contribution guidelines [here](CONTRIBUTION.md).
+
+## **ToDo**
+
+* [ ] Support for .net core
 
 ---
 
