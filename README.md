@@ -3,8 +3,9 @@
 </p>
 <hr>
 
+[![OfflineSync Client](https://img.shields.io/nuget/v/OfflineSyncTest.Server.svg)](https://www.nuget.org/packages/OfflineSyncTest.Server/)
 
-[![NuGet](https://img.shields.io/nuget/v/Nuget.Core.svg)](https://www.nuget.org/packages/OfflineSyncTest.Server/)
+[![OfflineSync Client](https://img.shields.io/nuget/v/OfflineSyncTest.Client.svg)](https://www.nuget.org/packages/OfflineSyncTest.Client/)
 
 ## **Table of Contents**
 
