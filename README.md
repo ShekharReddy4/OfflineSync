@@ -7,7 +7,19 @@
 
 * [Introduction](#introduction)
 * [How to Use?](#how-to-use-offlinesync)
+  - [Types of Sync](#types-of-sync)
+    - [Client to server](#client-to-server)
+    - [Client to server and Hard Delete](#client-to-server-and-hard-delete)
+    - [Server to Client](#server-to-client)
+    - [TwoWay Sync](#two-way-sync)
 * [Terminology](#terminology)
+  - [AutoSync](#autosync)
+  * [Priority](#priority)
+  * [VersionID](#version-id)
+  * [TransactionID](#transaction-id)
+  * [IsSynced](#is-synced)
+  * [SyncCreatedAt (client/server)](#sync-created-at)
+  * [SyncModifiedAt (client/server)](#sync-modified-at)
 * [Contribute](#contribute)
 * [License](#license)
 
@@ -59,6 +71,7 @@ Offline Sync suppports any of the below mentioned types of Sync.
 
 * **Note:**
   >* **Discards the server changes if there are any.**
+  **Use Case: Any Metadata tables(like Dropdown options etc..) in an application.**
 
 #### **TwoWay Sync**
 
@@ -102,6 +115,8 @@ Following steps illustrate the configuration and usage of offline sync in a proj
 ### Client Side
 
 In the client project install this nuget package, please follow below steps.
+
+[![Nuget](./OfflineSync/MD-Resources/Nuget_white.png)](https://www.nuget.org/)
 
 > **Note: Examples  below isllustrate using offlinesync to sync one table on client side with that of a respective one on the server side.**
 
@@ -170,7 +185,9 @@ new SyncUtility&lt;tblTestACTS>().StartSyncAsync();
 
 ### Server Side Configurations
 
-Please install the nuget package on the server application and follow below steps to enable offlinesync successfully
+Please install the nuget package on the server application and follow below steps to enable offlinesync successfully.
+
+[![Nuget](./OfflineSync/MD-Resources/Nuget_white.png)](https://www.nuget.org/)
 
 * add connnection string in the web.config check the below example.
 
