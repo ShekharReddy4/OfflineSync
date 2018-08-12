@@ -3,9 +3,12 @@
 </p>
 <hr>
 
+
+
 ## **Table of Contents**
 
 * [Introduction](#introduction)
+* [Supported frameworks](#supported-frameworks)
 * [How to Use?](#how-to-use-offlinesync)
   - [Types of Sync](#types-of-sync)
     - [Client to server](#client-to-server)
@@ -22,6 +25,7 @@
   * [SyncModifiedAt (client/server)](#sync-modified-at)
 * [Contribute](#contribute)
 * [License](#license)
+* [Contact Us](#contact-us)
 
 ## **Introduction**
 
@@ -36,6 +40,11 @@ Offline Sync is a Nuget Package which can be used to keep client and server side
 
 * **Note:**
   >* **Currently only <u>SQLite</u> DB is supported on the client side and <u>SQLServer</u> DB on the server side. Future implementation would include other databases too.**
+  
+## **Supported Frameworks**
+
+Please refer the following table to know the frameworks we support and tested so far.
+
 
 ## **How to Use OfflineSync?**
 
@@ -98,16 +107,35 @@ These are a few terms that you would come across while you use the _offline sync
 #### **AutoSync**
 
 #### **Priority**
+When the sync type is Twoway Sync the priority value for a table will be setup before we do a sync.
+These values could be any of these 3.
+
+* Server
+>* The record on the server side will be considered over the client side record.
+* Client
+>* The record on the client side will be considered over the server side record.
+* LastUpdated
+>* Lastupdated priority means the record which was recently updated will be considered.
+
+When in conflict the priority value will be crucial in making the changes.
 
 #### **Version ID**
 
-#### **Transaction ID**
+This column value for a record in a tables holds a unique id for that record.
 
+#### **Transaction ID**
+ 
 #### **Is Synced**
+
+This column value for a record in a table says if the record is synced or not at that point of time.
 
 #### **Sync Created At**
 
+This column value for a record in a table holds the timestamp of the record created at.
+
 #### **Sync Modified At**
+
+This column value for a record in a table holds the timestamp of the record modified at last time.
 
 ---
 
@@ -208,3 +236,9 @@ Please read the contribution guidelines [here](CONTRIBUTION.md).
 ## **License**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
+## **Contact Us**
+
+We have a dedicated telegram channel for the support. You may reach us there. We will follow up as and when we are free.
+
+Click this link to join the channel.
