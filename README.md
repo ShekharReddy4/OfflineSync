@@ -47,6 +47,12 @@ Offline Sync is a Nuget Package which can be used to keep client and server side
 
 Please refer the following table to know the frameworks we support and tested so far.
 
+| Frameworks  | Version |
+| ------------- | ------------- |
+| WPF  | 1.0.0  |
+| UWP  | 1.0.0  |
+| Xamarin native | 1.0.0 |
+| Xamarin forms | 1.0.0 |
 
 ## **How to Use OfflineSync?**
 
